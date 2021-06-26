@@ -8,10 +8,6 @@
 // carta (a) donde a es el valor numérico entre 0 y 39 dice qué carta es
 // valor (a) donde a es el valor entre 0 y 39 devuelve el valor de la carta en el juego {1,...,7, 0,5}
 // mezclar mezcla las cartas, hay que agregar los rand que no sé por qué no me los agarra, creo que falta la biblioteca
-
-int main()
-{
-//resetear mazo
 int mazo [40];
     int resetearmazo (){
         for (int i=0; i<40; i++)
@@ -68,7 +64,6 @@ int mazo [40];
         return valorcarta;
     }
 //intercambiar cartas HAY QUE METER LOS RAND()
-
     int mezclar() {
         for (int i=0; i<100; i++){
             int aux;
@@ -80,11 +75,50 @@ int mazo [40];
         }
         return 0;
     }
-
+int main()
+{
     resetearmazo();
-    mostrar();
     mezclar();
-    mostrar();
+    mezclar();
+    int cantidad=4;
+    int dinero [cantidad][2];
+    for (int i=0; i < cantidad; i++){
+        dinero[i][0]=5000;
+    }
+    printf ("¿Cuántos jugadores?\n");
+    scanf ("%d", &cantidad);
+    while ((cantidad <1) | (cantidad >5) ){
+        printf ("Por favor ingrese un número entre 1 y 5\n");
+        scanf  ("%d", &cantidad);
+    }
+    int cartasJugador[cantidad][10];
+
+    for (int i=0; i<cantidad; i++){
+        cartasJugador[i][0] = mazo [i];
+        printf ("Jugador %d ha recibido su carta\n", i+1);
+    }
+    int n=0;
+    for (int i=0; i <cantidad; i++){
+        int masCartas=0;
+        printf ("\n\nJugador %d, has recibido un ", i+1); carta(cartasJugador[i][0]);printf(" ¿Cuánto quieres apostar?\n");
+        scanf ("%d", &dinero[i][1]); printf ("\n");
+        printf ("¿Cuántas cartas más deseas pedir?");
+        scanf ("%d", &masCartas);
+        for (int j=0; j<masCartas; j++){
+            cartasJugador[i][j+1]=mazo [cantidad+n];
+            printf ("Jugador %d, has recibido un ",i+1); carta(cartasJugador[i][j+1]);
+        n++;
+        }
+
+    }
+
+    for (int i=0; i<cantidad; i++){
+            i++;
+
+    }
+
+
+
 
     return 0;
     }
