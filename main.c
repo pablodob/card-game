@@ -6,7 +6,7 @@
 
 #define MIN_JUGADORES 1
 #define MAX_JUGADORES 5
-#define MAX_MANO 12
+#define MAX_MANO 14
 #define POZO_JUGADOR 5000
 
 // SON TODAS FUNCIONES
@@ -40,21 +40,22 @@ int main()
     int jugadores;
 
     do {
-        printf ("Por favor ingrese el número de jugadores (entre %d y %d)\n", MIN_JUGADORES, );
+        printf ("Por favor ingrese el número de jugadores (entre %d y %d)\n", MIN_JUGADORES, MAX_JUGADORES);
         printf (">");
         scanf  ("%d", &jugadores);
-    } ((jugadores <MIN_JUGADORES) || (jugadores >MAX_JUGADORES) )
+    }
+    while((jugadores <MIN_JUGADORES) || (jugadores >MAX_JUGADORES) );
 
     int pozo[jugadores];
     int apuesta[jugadores];
-    int cartasJugador[cantidad][MAX_MANO];
+    int cartasJugador[jugadores][MAX_MANO];
 
     //reparte pozo
     for (i=0; i < jugadores; i++){
         pozo[i]=POZO_JUGADOR;
     }
 
-    for (int i=0; i<cantidad; i++){
+    for (int i=0; i<jugadores; i++){
         cartasJugador[i][0] = mazo [i];
         printf ("Jugador %d ha recibido su carta\n", i+1);
     }
@@ -63,7 +64,7 @@ int main()
     for (int i=0; i <cantidad; i++){
 
         int respuesta;
-        srand(getpid())
+        srand(getpid());
         int carta_mano;
 
         if (pozo[i]<0){
