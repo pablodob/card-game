@@ -7,6 +7,7 @@
 #define MIN_JUGADORES 1
 #define MAX_JUGADORES 5
 #define MAX_MANO 12
+#define PUNTAJE_MAX 7,5
 #define POZO_JUGADOR 5000
 #define APUESTA_MIN 50
 #define APUESTA_MAX 200
@@ -22,15 +23,13 @@
 
 
 void resetearmazo (int []);
-//mostrar mazo
 void mostrarmazo(int []);
-//qué carta es
-void carta (int);
-//prueba mostrar carta
+void num2carta (int , int []);
+void carta2impresion (int []);
+void imprimir(int );
 void mostrar (int []);
-int valor (int);
+float valor (int);
 void mezclar(int []);
-void swap(int*, int*);
 
 int main()
 {
@@ -76,6 +75,8 @@ int main()
     for (int i=0; i < jugadores; i++){
 
         int respuesta;
+        int carta_mano[2];
+        float puntaje=0;
 
         if (pozo[i]<0){
                 printf ("El jugador %d, no tiene dinero en el pozo\n", i+1);
@@ -86,26 +87,38 @@ int main()
         cartasJugador[i][0] = mazo[n_repartidas++];
 
         printf ("\n\nJugador %d, has recibido un ", i+1);
-        carta(cartasJugador[i][0]);
+        imprimir(cartasJugador[i][j]);
 
         do {
-            printf("¿Cuánto quieres apostar? (Debe apostar un valor entre %d y %d\n", APUESTA_MIN, min(pozo[i],APUESTA_MAX)); //ver caso si pozo es menor a apuesta min
+            printf("¿Cuánto quieres apostar? (Debe apostar un valor entre %d y %d)\n", APUESTA_MIN, min(pozo[i],APUESTA_MAX)); //ver caso si pozo es menor a apuesta min
             printf(">");
             scanf ("%d", &apuesta[i]);
         } while ( (apuesta[i]<APUESTA_MIN) && (apuesta[i] > min(pozo[i], APUESTA_MAX) ));
 
 
-        for (int j=1; j<MAX_MANO && respuesta != 2; j++){
+        for (int j=1; j<MAX_MANO && respuesta != '2' && puntaje < PUNTAJE_MAX; j++){
+
             do{
                 printf ("¿Desea pedir una nueva carta?\n SI: 1 \n NO: 2\n");
                 printf(">");
                 scanf ("%d", &respuesta);
+
+
                 if (respuesta == 1){
                     cartasJugador[i][j]=mazo[n_repartidas++];
-                    printf ("Has recibido un ",i+1); carta(cartasJugador[i][j]);
+                    printf ("Has recibido un ");
+                    imprimir(cartasJugador[i][j]);
                 }
-            } while (respuesta!=1 && respuesta!=2);
+
+                num2carta(cartasJugador[i][j], carta_mano);
+                puntaje = puntaje + valor(carta_mano[1]);
+
+                printf("\nSu puntaje acualmente es de %f\n", puntaje);
+
+            } while (respuesta!='1' && respuesta!='2');
+
         }
+
     }
 
     return 0;
@@ -125,55 +138,73 @@ void mostrarmazo(int mazo[]){
     int i;
     for (i=0; i<40; i++)
     {
-        printf ("%d, ", mazo[i]);
+        imprimir(mazo[i]);
+        printf (", ");
     }
     printf ("\n");
 }
 
 //qué carta es
-void carta (int a){
-    if ((a)%10< 7){
-    printf ("Es un %d ", (a%10)+1);
+void num2carta (int num, int carta[]){
+    carta [0] = (num/10);
+
+    if ((num)%10< 7){
+        carta[1] = (num%10)+1;
     }
     else {
-    printf ("Es un %d ", a%10+3);
+        carta[1] = (num%10+3);
     }
-    if (a < 10){
-    printf ("de oro \n");
+}
+
+void carta2impresion (int carta[]){
+
+    printf("%d de ", carta[1]);
+    switch (carta[0]){
+        case 0: {
+            printf("oro");
+            break;
+        }
+        case 1: {
+            printf("basto");
+            break;
+        }
+        case 2: {
+            printf("copa");
+            break;
+        }
+        case 3: {
+            printf("espada");
+            break;
+            }
     }
-    else if (a < 20){
-    printf ("de basto \n");
-    }
-    else if (a < 30){
-    printf ("de copa \n");
-    }
-    else {
-    printf ("de espada \n");
-    }
-    return 0;
+}
+
+void imprimir(int num){
+    int carta[2];
+    num2carta(num , carta);
+    carta2impresion (carta);
 }
 
 //prueba mostrar carta
 void mostrar (int mazo[]){
     for (int i=0; i<40; i++)
     {
-        carta (mazo[i]);
+        imprimir (mazo[i]);
     }
 }
 
 //valor carta
-int valor (int a) {
-float valorcarta;
-    if (a % 10 < 7){
-    valorcarta = a+1;
+float valor (int num) {
+    float valorcarta;
+    if (num  <= 7){
+        valorcarta = num;
     }
     else {
-    valorcarta = 0,5;
+        valorcarta = 0.5;
     }
     return valorcarta;
 }
 
-//intercambiar cartas HAY QUE METER LOS RAND()
 void mezclar(int mazo[]) {
     int r1,r2;
     int temp;
@@ -182,7 +213,7 @@ void mezclar(int mazo[]) {
         r1 = rand() %40;
         r2 = rand() %40;
 
-        printf("Intecambio carta %d por carta %d \n", r1, r2);
+        printf("Intecambio carta %d por carta %d, ", r1, r2);
 
         temp = mazo[r1];
         mazo[r1] = mazo[r2];
