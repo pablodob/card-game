@@ -6,11 +6,11 @@
 
 #define MIN_JUGADORES 1
 #define MAX_JUGADORES 5
-#define MAX_MANO 12
+#define MAX_MANO 14
 #define PUNTAJE_MAX 7,5
 #define POZO_JUGADOR 5000
-#define APUESTA_MIN 50
-#define APUESTA_MAX 200
+#define APUESTA_MIN 100
+#define APUESTA_MAX 1500
 #define min(X, Y) ((X) < (Y) ? (X) : (Y))
 
 // SON TODAS FUNCIONES
@@ -30,9 +30,9 @@ void imprimir(int );
 void mostrar (int []);
 float valor (int);
 void mezclar(int []);
+float puntaje(int cartas_mano[], int cartas_cantidad);
 
-int main()
-{
+int main(){
     int mazo [40];
     int cartas_repartidas[40];
     int n_repartidas = 0;
@@ -56,6 +56,7 @@ int main()
     int pozo[jugadores];
     int apuesta[jugadores];
     int cartasJugador[jugadores][MAX_MANO];
+    int cantidadCartasJugador[jugadores];
 
     //declaro en -1 todas las manos de jugadores
     for (i=0;i<jugadores;i++)
@@ -65,6 +66,7 @@ int main()
     //reparte pozo
     for (i=0; i < jugadores; i++){
         pozo[i]=POZO_JUGADOR;
+        cantidadCartasJugador[i]++;
     }
 
     for (int i=0; i<jugadores; i++){
@@ -82,9 +84,6 @@ int main()
                 continue;
         }
 
-        //reparte carta
-        cartasJugador[i][0] = mazo[n_repartidas++];
-
         printf ("\n\nJugador %d, has recibido un ", i+1);
         imprimir(cartasJugador[i][j]);
 
@@ -96,36 +95,50 @@ int main()
         } while ( (apuesta[i]<APUESTA_MIN) || (apuesta[i] > min(pozo[i], APUESTA_MAX) ));
 
 
+        do {
+            int j=1;
+            printf ("¿Deseas pedir otra carta?\n1: Sí\n2: No\n>");
+            scanf ("%d",&respuesta);
+            if (respuesta == 2){
+                break;
+            }
+            if (respuesta == 1){
+                cartasJugador[i][j]=mazo[n_repartidas++];
+                cantidadCartasJugador[i]++;
+                printf ("\n\nJugador %d, has recibido un ", i+1);
+                imprimir(cartasJugador[i][j]);
+                j++;
+            }
 
-        /* to do
-        for (int j=1; j<MAX_MANO && respuesta != 2 && puntaje < PUNTAJE_MAX; j++){
-
-            do{
-                printf ("¿Desea pedir una nueva carta?\n SI: 1 \n NO: 2\n");
-                printf(">");
-                scanf ("%d", &respuesta);
+        } while (respuesta !=2);
 
 
-                if (respuesta == 1){
-                    cartasJugador[i][j]=mazo[n_repartidas++];
-                    printf ("Has recibido un ");
-                    imprimir(cartasJugador[i][j]);
-                }
+    }
 
-                num2carta(cartasJugador[i][j], carta_mano);
-                puntaje = puntaje + valor(carta_mano[1]);
-
-                printf("\nSu puntaje acualmente es de %f\n", puntaje);
-
-            } while (respuesta!='1' && respuesta!='2');
-
-        }*/
-
+    for (int i; i<jugadores; i++){
+        printf ("el jugador %d ha recibido %f puntos\n", i+1, puntaje(cartasJugador[i], cantidadCartasJugador[i]));
     }
 
     return 0;
+
     }
 
+float puntaje(int cartas_mano[], int cartas_cantidad){
+    int i;
+    int carta[2];
+    float puntos=0;
+
+    for (i = 0; i < cartas_cantidad; i++){
+        num2carta(cartas_mano[i],carta);
+        if (carta[1]  <= 7)
+            puntos = puntos + carta[1];
+        else
+            puntos = puntos + 0.5;
+
+    }
+    return puntos;
+
+}
 
 void resetearmazo (int mazo[]){
     int i;
