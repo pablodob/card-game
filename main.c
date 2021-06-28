@@ -8,7 +8,7 @@
 #define MAX_JUGADORES 5
 #define MAX_MANO 14
 #define PUNTAJE_MAX 7,5
-#define POZO_JUGADOR 5000
+#define POZO_JUGADOR 5000.0
 #define POZO_BANCA 100000
 #define TECHO_BANCA 6
 #define APUESTA_MIN 100
@@ -24,17 +24,17 @@
 // mezclar mezcla las cartas, hay que agregar los rand que no sé por qué no me los agarra, creo que falta la bibliotec
 
 
-void resetearmazo (int []);
-void mostrarmazo(int []);
-int num2palo (int);
-int num2numero (int);
-void num2carta (int , int []);
-void imprimir(int );
-void mostrar (int []);
-float valor (int);
-void mezclar(int []);
-float puntaje(int [], int);
-int ganador_apuesta(float, float, int[], int);
+void  resetearmazo    (int []);
+void  mostrarmazo     (int []);
+int   num2palo        (int);
+int   num2numero      (int);
+void  num2carta       (int, int []);
+void  imprimir        (int );
+void  mostrar         (int []);
+float valor           (int);
+void  mezclar         (int []);
+float puntaje         (int [], int);
+float ganador_apuesta (float, int[], int);
 
 int main(){
     int mazo [40];
@@ -55,14 +55,14 @@ int main(){
         scanf  ("%d", &jugadores);
     } while( (jugadores <MIN_JUGADORES) || (jugadores >MAX_JUGADORES) );
 
-    int pozo[jugadores];
-    int pozoBanca;
-    int apuesta[jugadores];
+    float pozo[jugadores];
+    float pozoBanca;
+    int   apuesta[jugadores];
 
-    int cartasJugador[jugadores][MAX_MANO];
-    int cartasBanca[MAX_MANO];
-    int cantidadCartasJugador[jugadores];
-    int cantidadCartasBanca;
+    int   cartasJugador[jugadores][MAX_MANO];
+    int   cartasBanca[MAX_MANO];
+    int   cantidadCartasJugador[jugadores];
+    int   cantidadCartasBanca;
 
     //declaro en -1 todas las manos de jugadores
     for (i=0;i<jugadores;i++)
@@ -94,7 +94,7 @@ int main(){
 
         int respuesta=0;
 
-        if (pozo[i]<0){
+        if (pozo[i]<APUESTA_MIN){
                 printf ("El jugador %d, no tiene dinero en el pozo\n", i+1);
                 continue;
         }
@@ -145,18 +145,31 @@ int main(){
 
 
 
-    for (int i=0; i<jugadores; i++){
-        for (int j; j<MAX_MANO; j++){
-            printf("&d,  ", cartasJugador [i][j]);
-        }
-        printf ("\n");
-
-    }
 
     for (int i; i<jugadores; i++){
         printf ("el jugador %d ha recibido %f puntos\n", i+1, puntaje(cartasJugador[i], cantidadCartasJugador[i]));
     }
         printf ("La Banca ha conseguido %f puntos\n", puntaje(cartasBanca, cantidadCartasBanca));
+
+    for (i=0; i<jugadores; i++){
+        float aux = ganador_apuesta( puntaje(cartasBanca, cantidadCartasBanca), cartasJugador[i], cantidadCartasJugador[i]);
+        if (aux == -1.0){
+            printf ("El jugador %d ha perdido su apuesta\n", i+1);
+            pozo[i]=pozo[i]-apuesta[i];
+            pozoBanca=pozoBanca + apuesta [i];
+        }
+        else {
+            printf("El jugador %d ha ganado un %f%\n", i+1, aux*100);
+            pozo[i]=pozo[i]+apuesta[i]*aux;
+            pozoBanca=pozoBanca-apuesta[i]*aux;
+
+        }
+    }
+
+    for (i=0; i<jugadores; i++){
+        printf ("%f ,", pozo[i]);
+    }
+    printf ("%f ,", pozoBanca);
 
     return 0;
 
@@ -179,7 +192,7 @@ int  num2numero (int numerocarta){
     }
 }
 
-int ganador_apuesta(float puntos_j, float puntos_b, int mano[], int cartas_mano){
+float ganador_apuesta(float puntos_b, int mano[], int cartas_mano){
     /*
     Referencias:
     - 1 gana banca
@@ -188,46 +201,48 @@ int ganador_apuesta(float puntos_j, float puntos_b, int mano[], int cartas_mano)
     - 4 gana jugador 75%
     - 5 gana jugador 100%
     */
+    float puntos_j;
     int carta0[2],carta1[2];
     carta0[0] = num2palo(mano[0]);
     carta0[1] = num2numero(mano[0]);
     carta1[0] = num2palo(mano[1]);
     carta1[1] = num2numero(mano[1]);
+    puntos_j=puntaje(mano,cartas_mano);
 
     if(puntos_j > 7.5){
-        printf("El jugador se pasó. Gana la banca");
-        return 1;
+        //printf("El jugador se pasó. Gana la banca");
+        return -1.0;
     }
     else if(puntos_j < 7,5){
         if (puntos_b>=puntos_j && puntos_b <= 7.5){
-            printf("Banca tiene más puntos que jugador. Gana banca");
-            return 1;
+            //printf("Banca tiene más puntos que jugador. Gana banca");
+            return -1.0;
             }
         else{
-            printf("Gana el jugador el 25% de la apuesta");
-            return 2;
+            //printf("Gana el jugador el 25% de la apuesta");
+            return 0.25;
         }
     }
     else if (puntos_b == 7.5){
-        printf("La banca tiene 7 y medio. Gana la banca");
-        return 1;
+        //printf("La banca tiene 7 y medio. Gana la banca");
+        return -1.0;
         }
     else if (cartas_mano>2){
-        printf("El jugador gana con tiene 7 y medio pero con más de 2 cartas. Gana 25% de la apuesta");
-        return 2;
+        //printf("El jugador gana con tiene 7 y medio pero con más de 2 cartas. Gana 25% de la apuesta");
+        return 0.25;
         }
     else if (carta0[0]!=carta1[0]){
-        printf("Gana el jugador con 7 y medio y cartas de distinto palo. Gana 50% de la apuesta");
-        return 3;
+        //printf("Gana el jugador con 7 y medio y cartas de distinto palo. Gana 50% de la apuesta");
+        return 0.5;
         }
     else if (carta0[0]==0 && (carta0[1]==12 || carta1[1]==12)){
-        printf("Gana el jugador con 7 y medio con un rey y cartas de oro. Gana 100% de la apuesta");
-        return 5;
+        //printf("Gana el jugador con 7 y medio con un rey y cartas de oro. Gana 100% de la apuesta");
+        return 1.0;
         }
     else
         {
-        printf("Gana el jugador con 7 y medio con cartas del mismo palo. Gana 75% de la apuesta");
-        return 4;
+        //printf("Gana el jugador con 7 y medio con cartas del mismo palo. Gana 75% de la apuesta");
+        return 0.75;
         }
 }
 
