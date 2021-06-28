@@ -6,6 +6,8 @@
 
 #define MIN_JUGADORES 1
 #define MAX_JUGADORES 5
+#define MIN_RONDAS 2
+#define MAX_RONDAS 4
 #define MAX_MANO 14
 #define PUNTAJE_MAX 7,5
 #define POZO_JUGADOR 5000.0
@@ -46,8 +48,9 @@ int main(){
     resetearmazo(mazo);
     mezclar(mazo);
 
-    int i,j;
+    int g,i,j;
     int jugadores;
+    int rondas;
 
     do {
         printf ("Por favor ingrese el número de jugadores (entre %d y %d)\n", MIN_JUGADORES, MAX_JUGADORES);
@@ -66,7 +69,22 @@ int main(){
 
     int contador_pasados = 0;
     int contador_7med = 0;
+    //reparte pozo
+    for (i=0; i < jugadores; i++){
+        pozo[i]=POZO_JUGADOR;
+    }
+    pozoBanca= POZO_BANCA;
 
+     do {
+        printf ("Por favor ingrese el número de rondas (entre %d y %d)\n", MIN_RONDAS, MAX_RONDAS);
+        printf (">");
+        scanf  ("%d", &rondas);
+    } while( (rondas <MIN_RONDAS) || (jugadores >MAX_RONDAS) );
+
+
+
+    //empiezan rondas
+    for(g=0;g<rondas;g++){
     //declaro en -1 todas las manos de jugadores
     for (i=0;i<jugadores;i++)
         for(j=0;j<MAX_MANO;j++)
@@ -76,11 +94,7 @@ int main(){
             cartasBanca [j] = -1;
     }
 
-    //reparte pozo
-    for (i=0; i < jugadores; i++){
-        pozo[i]=POZO_JUGADOR;
-    }
-    pozoBanca= POZO_BANCA;
+
 
     for (int i=0; i<jugadores; i++){
         cantidadCartasJugador[i]=0;
@@ -106,7 +120,7 @@ int main(){
         imprimir(cartasJugador[i][cantidadCartasJugador[i]++]);
 
         do {
-            printf("¿Cuánto quieres apostar? (Debe apostar un valor entre %d y %d)\n", APUESTA_MIN, min(pozo[i],APUESTA_MAX)); //ver caso si pozo es menor a apuesta min
+            printf("¿Cuánto quieres apostar? (Debe apostar un valor entre %d y %f)\n", APUESTA_MIN, min(pozo[i],APUESTA_MAX)); //ver caso si pozo es menor a apuesta min
             printf(">");
             scanf ("%d", &apuesta[i]);
             printf ("%d", apuesta[i] );
@@ -169,7 +183,7 @@ int main(){
 
     printf ("Los jugadores se pasaron de 7 y medio en %d manos\n", contador_pasados);
     printf ("Hubo %d manos de jugadores con un 7 y una figura", contador_7med);
-
+    }
     return 0;
 
 }
