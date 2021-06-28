@@ -30,7 +30,8 @@ void imprimir(int );
 void mostrar (int []);
 float valor (int);
 void mezclar(int []);
-float puntaje(int cartas_mano[], int cartas_cantidad);
+float puntaje(int [], int);
+int ganador_apuesta(float, float, int[], int);
 
 int main(){
     int mazo [40];
@@ -66,11 +67,12 @@ int main(){
     //reparte pozo
     for (i=0; i < jugadores; i++){
         pozo[i]=POZO_JUGADOR;
-        cantidadCartasJugador[i]++;
+
     }
 
     for (int i=0; i<jugadores; i++){
         cartasJugador[i][0] = mazo [n_repartidas++];
+        cantidadCartasJugador[i]=1;
         printf ("Jugador %d ha recibido su carta\n", i+1);
     }
 
@@ -94,14 +96,10 @@ int main(){
                     printf ("%d", apuesta[i] );
         } while ( (apuesta[i]<APUESTA_MIN) || (apuesta[i] > min(pozo[i], APUESTA_MAX) ));
 
-
         do {
             int j=1;
             printf ("¿Deseas pedir otra carta?\n1: Sí\n2: No\n>");
             scanf ("%d",&respuesta);
-            if (respuesta == 2){
-                break;
-            }
             if (respuesta == 1){
                 cartasJugador[i][j]=mazo[n_repartidas++];
                 cantidadCartasJugador[i]++;
@@ -122,22 +120,72 @@ int main(){
     return 0;
 
     }
+int ganador_apuesta(float puntos_j, float puntos_b, int mano[], int cartas_mano){
+    /*
+    Referencias:
+    - 1 gana banca
+    - 2 gana jugador 25%
+    - 3 gana jugador 50%
+    - 4 gana jugador 75%
+    - 5 gana jugador 100%
+    */
+    int carta0[2],carta1[2];
+    num2carta(mano[0],carta0);
+    num2carta(mano[1],carta1);
+
+
+    if(puntos_j > 7.5){
+        printf("El jugador se pasó. Gana la banca");
+        return 1;
+    }
+    else if(puntos_j < 7,5){
+        if (puntos_b>=puntos_j && puntos_b <= 7.5){
+            printf("Banca tiene más puntos que jugador. Gana banca");
+            return 1;
+            }
+        else{
+            printf("Gana el jugador el 25% de la apuesta");
+            return 2;
+        }
+    }
+    else if (puntos_b == 7.5){
+        printf("La banca tiene 7 y medio. Gana la banca");
+        return 1;
+        }
+    else if (cartas_mano>2){
+        printf("El jugador gana con tiene 7 y medio pero con más de 2 cartas. Gana 25% de la apuesta");
+        return 2;
+        }
+    else if (carta0[0]!=carta1[0]){
+        printf("Gana el jugador con 7 y medio y cartas de distinto palo. Gana 50% de la apuesta");
+        return 3;
+        }
+    else if (carta0[0]==0 && (carta0[1]==12 || carta1[1]==12)){
+        printf("Gana el jugador con 7 y medio con un rey y cartas de oro. Gana 100% de la apuesta");
+        return 5;
+        }
+    else
+        {
+        printf("Gana el jugador con 7 y medio con cartas del mismo palo. Gana 75% de la apuesta");
+        return 4;
+        }
+}
 
 float puntaje(int cartas_mano[], int cartas_cantidad){
     int i;
     int carta[2];
-    float puntos=0;
+    float puntos=0.0;
 
     for (i = 0; i < cartas_cantidad; i++){
+        printf ("%d, ",cartas_mano[i] );
         num2carta(cartas_mano[i],carta);
         if (carta[1]  <= 7)
-            puntos = puntos + carta[1];
+            puntos = puntos + carta[1]*1.0;
         else
             puntos = puntos + 0.5;
 
     }
     return puntos;
-
 }
 
 void resetearmazo (int mazo[]){
@@ -208,11 +256,11 @@ void mostrar (int mazo[]){
     }
 }
 
-//valor carta
+//valor carta --- no sirve
 float valor (int num) {
-    float valorcarta;
+    float valorcarta=0.0;
     if (num  <= 7){
-        valorcarta = num;
+        valorcarta = (num)*1.0;
     }
     else {
         valorcarta = 0.5;
