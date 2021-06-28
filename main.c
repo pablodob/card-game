@@ -179,11 +179,6 @@ int  num2numero (int numerocarta){
     }
 }
 
-void num2carta (int num, int carta[]){
-    carta [0] = num2palo;
-    carta [1] = num2numero(num);
-}
-
 int ganador_apuesta(float puntos_j, float puntos_b, int mano[], int cartas_mano){
     /*
     Referencias:
@@ -194,9 +189,10 @@ int ganador_apuesta(float puntos_j, float puntos_b, int mano[], int cartas_mano)
     - 5 gana jugador 100%
     */
     int carta0[2],carta1[2];
-    num2carta(mano[0],carta0);
-    num2carta(mano[1],carta1);
-
+    carta0[0] = num2palo(mano[0]);
+    carta0[1] = num2numero(mano[0]);
+    carta1[0] = num2palo(mano[1]);
+    carta1[1] = num2numero(mano[1]);
 
     if(puntos_j > 7.5){
         printf("El jugador se pasó. Gana la banca");
