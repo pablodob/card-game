@@ -37,6 +37,7 @@ float valor           (int);
 void  mezclar         (int []);
 float puntaje         (int [], int);
 float ganador_apuesta (float, int[], int, int*, int*);
+int   consigna_1      (float[], float, int);
 
 int main(){
     int mazo [40];
@@ -184,9 +185,30 @@ int main(){
     printf ("Los jugadores se pasaron de 7 y medio en %d manos\n", contador_pasados);
     printf ("Hubo %d manos de jugadores con un 7 y una figura", contador_7med);
     }
+    printf ("\nEl jugador %d ha sido el más afortunado hoy.", consigna_1( pozo,pozoBanca,jugadores)+1);
     return 0;
 
 }
+
+int consigna_1 (float pozo_j[], float pozo_b, int cantidad){
+    float ganancias [cantidad+1];
+    for (int i=0; i<cantidad; i++){
+        ganancias[i] = pozo_j[i]-POZO_JUGADOR;
+    }
+    ganancias [cantidad+1]=pozo_b-POZO_BANCA;
+
+    int aux = 0;
+    for (int i=0; i<cantidad; i++){
+        if (ganancias [i]>ganancias[i+1]){
+            ganancias[i+1]=ganancias[i];
+        }
+        else {
+            aux = i+1;
+        }
+    }
+    return aux;
+    }
+
 
 int  num2palo (int numerocarta){
     if (numerocarta >=0 && numerocarta <=39){
