@@ -261,13 +261,13 @@ void all_cartas_palo(int mazo[], int repartidas)
     int mazoXpalos[4][10];
     int i, j, k;
     int flag;
+    int print_flag = 0;
 
     //inicializo array
     for (i=0; i<4;i++)
         for (j=0; j<10; j++)
             mazoXpalos[i][j] = 0;
 
-    //marcamos en el mazo por palos las cartas que salieron
     //marcamos en el mazo por palos las cartas que salieron
     for (k=0;k<repartidas;k++)
         mazoXpalos[mazo[k]/10][mazo[k]%10] = 1;
@@ -280,23 +280,37 @@ void all_cartas_palo(int mazo[], int repartidas)
             switch (i) {
                 case 0: {
                     printf("En esta partida salieron todas las cartas de oro\n");
+                    print_flag = 1;
                     break;
                 }
                 case 1: {
                     printf("En esta partida salieron todas las cartas de basto\n");
+                    print_flag = 1;
                     break;
                 }
                 case 2: {
                     printf("En esta partida salieron todas las cartas de copa\n");
+                    print_flag = 1;
                     break;
                 }
                 case 3: {
                     printf("En esta partida salieron todas las cartas de espada\n");
+                    print_flag = 1;
                     break;
                 }
             }
         }
     }
+    
+    if (print_flag == 0)
+        printf("En esta partida no hubo ningún palo que salieran todas las cartas\n");
+
+    //to debug
+    for (i=0; i<4;i++)
+        for (j=0; j<10; j++)
+            printf ("%d,%d = %d | ", i, j, mazoXpalos[i][j]);
+    printf("\n");
+
 }
 
 int consigna_1 (float pozo_j[], float pozo_b, int cantidad){
