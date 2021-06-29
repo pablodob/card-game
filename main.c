@@ -40,8 +40,9 @@ float puntaje                   (int [], int);
 float ganador_apuesta           (float, int[], int, short int [], short int [], int);
 void  mas_afortunado            (float[], float, int);;
 void  ordenar_segun_ganancias   (float[], int);
-void  all_cartas_palo           (int [], int);
+void  all_cartas_palo           (int [], int, int [4][10]);
 void  top_5_numeros             (int [], int);
+void  print_all_cartas_palo(int [4][10]);
 
 int main(){
     int mazo [CARTAS_MAZO];
@@ -57,9 +58,18 @@ int main(){
 
     resetearmazo(mazo);
 
+    int mazoXpalos[4][10];
+
     int g,i,j;
     int jugadores;
     int rondas;
+
+    //inicializo el mazoXpalos utilizado en la función all_cartas_palo
+    for (i=0; i<4;i++)
+        for (j=0; j<10; j++)
+            mazoXpalos[i][j] = 0;
+
+
 
     do {
         printf ("Por favor ingrese el numero de jugadores (entre %d y %d)\n", MIN_JUGADORES, MAX_JUGADORES);
@@ -219,6 +229,9 @@ int main(){
             }
         n_repartidas_totales = n_repartidas_totales + n_repartidas;
         }
+
+    all_cartas_palo(mazo, n_repartidas, mazoXpalos);
+    
     }
 
     //Jugador que más dinero ganó (1)
@@ -271,7 +284,7 @@ int main(){
     printf ("termino");
 
     //Indicar si en una partida salieron todas las cartas de un mismo palo, indicar cual o cuales palos
-    all_cartas_palo(mazo, n_repartidas);
+    print_all_cartas_palo(mazoXpalos);
 
     return 0;
 
@@ -311,25 +324,28 @@ void top_5_numeros (int count_cartas[], int repartidas){
         printf ("\n%d. la carta %d ha salido %d veces",i+1, numerosMazo[i][1], numerosMazo [i][0]);
     }
 }
-void all_cartas_palo(int mazo[], int repartidas){
-    int mazoXpalos[4][10];
-    int i, j, k;
-    int flag;
-    int print_flag = 0;
 
-    //inicializo array
-    for (i=0; i<4;i++)
-        for (j=0; j<10; j++)
-            mazoXpalos[i][j] = 0;
+void all_cartas_palo(int mazo[], int repartidas, int mazoXpalos[4][10]){
+    int k;
 
     //marcamos en el mazo por palos las cartas que salieron
     for (k=0;k<repartidas;k++)
         mazoXpalos[mazo[k]/10][mazo[k]%10] = 1;
 
+}
+
+void print_all_cartas_palo(int mazoXpalos[4][10]){
+
+    int i, j;
+    int flag;
+    int print_flag = 0;
+
     for (i=0; i<4;i++) {
         flag = 1;
         for (j=0; (j<10) && (flag == 1); j++)
             flag = mazoXpalos[i][j];
+        
+        
         if (flag == 1){
             switch (i) {
                 case 0: {
@@ -360,11 +376,11 @@ void all_cartas_palo(int mazo[], int repartidas){
         printf("En esta partida no hubo ningún palo que salieran todas las cartas\n");
 
     //to debug
+    printf("Control. Salieron las siguientes cartas?:\n");
     for (i=0; i<4;i++)
         for (j=0; j<10; j++)
             printf ("%d,%d = %d | ", i, j, mazoXpalos[i][j]);
     printf("\n");
-
 }
 
 void mas_afortunado (float pozo_j[], float pozo_b, int cantidad){
@@ -533,7 +549,8 @@ void resetearmazo (int mazo[]){
     }
 }
 
-//mostrar mazo
+
+//Para control: mostrar todas las cartas de un mazo
 void mostrarmazo(int mazo[]){
     int i;
     for (i=0; i<CARTAS_MAZO; i++)
@@ -544,6 +561,7 @@ void mostrarmazo(int mazo[]){
     printf ("\n");
 }
 
+//Imprime una carta con numero y palo desde un numero del 0 al 39
 void imprimir(int num){
     printf("%d de ", num2numero(num));
     switch (num2palo(num)){
@@ -567,8 +585,7 @@ void imprimir(int num){
 
 }
 
-
-//prueba mostrar carta
+//Para control: mostrar todas las cartas de un mazo
 void mostrar (int mazo[]){
     for (int i=0; i<40; i++)
     {
