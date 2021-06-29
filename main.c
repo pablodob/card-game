@@ -38,7 +38,7 @@ float valor                     (int);
 void  mezclar                   (int []);
 float puntaje                   (int [], int);
 float ganador_apuesta           (float, int[], int, short int [], short int [], int);
-int   consigna_1                (float[], float, int);
+void   mas_afortunado            (float[], float, int);;
 void  ordenar_segun_ganancias   (float[], int);
 void  all_cartas_palo           (int [], int);
 
@@ -205,7 +205,7 @@ int main(){
     }
 
     //Jugador que más dinero ganó (1)
-    printf ("El jugador %d ha sido el m�s afortunado hoy.\n", consigna_1( pozo,pozoBanca,jugadores)+1);
+    mas_afortunado(pozo, pozoBanca, jugadores);
     //Apuesta máxima (2)
     printf ("La apuesta máxima fue de %f y la hicieron el/los siguientes: ", apuesta_max);
     for(i=0;i<jugadores;i++)
@@ -313,25 +313,40 @@ void all_cartas_palo(int mazo[], int repartidas)
 
 }
 
-int consigna_1 (float pozo_j[], float pozo_b, int cantidad){
-    float ganancias [cantidad+1];
-    for (int i=0; i<cantidad; i++){
-        ganancias[i] = pozo_j[i]-POZO_JUGADOR;
-    }
-    ganancias [cantidad+1]=pozo_b-POZO_BANCA;
-
-    int aux = 0;
-    for (int i=0; i<cantidad; i++){
-        if (ganancias [i]>ganancias[i+1]){
-            ganancias[i+1]=ganancias[i];
-        }
-        else {
-            aux = i+1;
-        }
-    }
-    return aux;
+void mas_afortunado (float pozo_j[], float pozo_b, int cantidad){
+    float ganancias [cantidad][2];
+    float ganancias_b;
+    int i;
+    int j;
+    for (i=0; i<cantidad; i++){
+        ganancias[i][0] = pozo_j[i]-POZO_JUGADOR;
+        ganancias[i][1] = i*1,0;
     }
 
+    float aux[2];
+    for (int i=0; i<cantidad; i++){
+        for (j=0; j<cantidad; j++){
+            if (ganancias [i][0]>ganancias[j][0]){
+                aux[0] = ganancias [i][0];
+                aux[1] = ganancias [i][1];
+                ganancias [i][0] = ganancias [j][0];
+                ganancias [i][1] = ganancias [j][1];
+                ganancias [j][0] = aux [0];
+                ganancias [j][1] = aux [1];
+            }
+        }
+    }
+    ganancias_b=pozo_b-POZO_BANCA;
+    int n;
+    if (ganancias [0][0]>ganancias_b){
+        n=(int) ganancias[0][1];
+        printf ("\nEl jugador %d se ha llevado el mayor número de ganancias", n+1);
+    }
+    else {
+        printf ("\nHoy la Banca ha salido ganando");
+    }
+
+}
 void ordenar_segun_ganancias (float pozo_j[], int cantidad){
     float ganancias [cantidad][2];
     int i;
