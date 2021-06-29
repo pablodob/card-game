@@ -39,6 +39,7 @@ float puntaje                   (int [], int);
 float ganador_apuesta           (float, int[], int, short int [], short int [], int);
 int   consigna_1                (float[], float, int);
 void  ordenar_segun_ganancias   (float[], int);
+void all_cartas_palo(int [], int);
 
 int main(){
     int mazo [40];
@@ -88,8 +89,7 @@ int main(){
     }
     pozoBanca= POZO_BANCA;
 
-    do { //no entra al do no se por que
-        printf ("HOLIS\n");
+    do { 
         printf ("Por favor ingrese el numero de rondas (entre %d y %d)\n", MIN_RONDAS, MAX_RONDAS);
         printf (">");
         scanf  ("%d", &rondas);
@@ -229,7 +229,9 @@ int main(){
         count_cartas[mazo[i]%10]++;
 
     for (i=0;i<10;i++)
-        printf("La carta %d salió %d veces", num2numero(i),count_cartas[i]);
+        printf("La carta %d salió %d veces, ", num2numero(i),count_cartas[i]);
+
+    printf("\n");
 
     //Determinar cuántos participantes perdieron por pasarse durante toda la partida. No responde. (6)
     printf ("Los siguientes jugadores se pasaron de 7 y medio durante toda la partida:\n");
@@ -243,12 +245,53 @@ int main(){
     ordenar_segun_ganancias(pozo, jugadores);
     printf ("termino");
 
-
-    //To do
     //Indicar si en una partida salieron todas las cartas de un mismo palo, indicar cual o cuales palos
+    all_cartas_palo(mazo, n_repartidas);
 
     return 0;
 
+}
+
+void all_cartas_palo(int mazo[], int repartidas)
+{
+    int mazoXpalos[4][10];
+    int i, j, k;
+    int flag;
+
+    //inicializo array
+    for (i=0; i<4;i++)
+        for (j=0; j<10; j++)
+            mazoXpalos[i][j] = 0;
+
+    //marcamos en el mazo por palos las cartas que salieron
+    for (k=0;k<repartidas;k++)
+        mazoXpalos[num2palo(mazo[k])][num2numero(mazo[k])] = 1;
+
+    for (i=0; i<4;i++) {
+        flag = 1;
+        for (j=0; (j<10) && (flag == 1); j++)
+            flag = mazoXpalos[i][j];
+        if (flag == 1){
+            switch (i) {
+                case 0: {
+                    printf("En esta partida salieron todas las cartas de oro\n");
+                    break;
+                }
+                case 1: {
+                    printf("En esta partida salieron todas las cartas de basto\n");
+                    break;
+                }
+                case 2: {
+                    printf("En esta partida salieron todas las cartas de copa\n");
+                    break;
+                }
+                case 3: {
+                    printf("En esta partida salieron todas las cartas de espada\n");
+                    break;
+                }
+            }
+        }
+    }
 }
 
 int consigna_1 (float pozo_j[], float pozo_b, int cantidad){
