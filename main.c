@@ -289,6 +289,8 @@ void all_cartas_palo(int mazo[], int repartidas)
                     printf("En esta partida salieron todas las cartas de espada\n");
                     break;
                 }
+                default:
+                    printf("No salió ninguna de las cartas de un sólo palo en esta partida\n");
             }
         }
     }
