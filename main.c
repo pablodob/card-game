@@ -64,6 +64,7 @@ int main(){
     do {
         printf ("Por favor ingrese el numero de jugadores (entre %d y %d)\n", MIN_JUGADORES, MAX_JUGADORES);
         printf (">");
+        fflush (stdin);
         scanf  ("%d", &jugadores);
     }
     while( (jugadores <MIN_JUGADORES) || (jugadores >MAX_JUGADORES) );
@@ -97,6 +98,7 @@ int main(){
     do {
         printf ("Por favor ingrese el numero de rondas (entre %d y %d)\n", MIN_RONDAS, MAX_RONDAS);
         printf (">");
+        fflush (stdin);
         scanf  ("%d", &rondas);
     }
     while( (rondas < MIN_RONDAS) || (rondas > MAX_RONDAS) );
@@ -141,8 +143,8 @@ int main(){
             do {
                 printf("\nCuánto quieres apostar? (Debe apostar un valor entre %f y %f)\n", APUESTA_MIN, min(pozo[i],APUESTA_MAX));
                 printf(">");
+                fflush (stdin);
                 scanf ("%d", &apuesta[i]);
-                printf ("%d", apuesta[i] );
             } while ( (apuesta[i]<APUESTA_MIN) || (apuesta[i] > min(pozo[i], APUESTA_MAX) ));
 
             // En caso de ser apuesta máxima actualiza variables apuesta_max y apuesta_max_jugador
@@ -156,6 +158,7 @@ int main(){
 
             do {
                 printf ("Deseas pedir otra carta?\n1: Si\n2: No\n>");
+                fflush (stdin);
                 scanf ("%d",&respuesta);
                 if (respuesta == 1){
                     cartasJugador[i][cantidadCartasJugador[i]]=mazo[n_repartidas++];
