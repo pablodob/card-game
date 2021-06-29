@@ -38,15 +38,20 @@ float valor                     (int);
 void  mezclar                   (int []);
 float puntaje                   (int [], int);
 float ganador_apuesta           (float, int[], int, short int [], short int [], int);
-void   mas_afortunado            (float[], float, int);;
+void  mas_afortunado            (float[], float, int);;
 void  ordenar_segun_ganancias   (float[], int);
 void  all_cartas_palo           (int [], int);
+void  top_5_numeros             (int [], int);
 
 int main(){
     int mazo [CARTAS_MAZO];
     int cartas_repartidas[CARTAS_MAZO];
     int n_repartidas;
+    int n_repartidas_totales=0;
     int count_cartas[10];
+    for (int i=0; i<10; i++){
+        count_cartas[i]=0;
+    }
 
     srand(getpid());
 
@@ -202,6 +207,15 @@ int main(){
         }
         printf ("%f \n", pozoBanca);
 
+        for (i=0; i<n_repartidas; i++){
+            if (num2numero(mazo[i])<=7){
+                count_cartas[num2numero(mazo[i])-1]++;
+            }
+            else {
+                count_cartas[num2numero(mazo[i])-3]++;
+            }
+        n_repartidas_totales = n_repartidas_totales + n_repartidas;
+        }
     }
 
     //Jugador que más dinero ganó (1)
@@ -226,7 +240,9 @@ int main(){
 
     //To do
     //Mostrar un top 5 de las cartas numéricas que más salieron sin importar el palo. Falta ordenar (5)
-    for (i=0;i<10;i++)
+    top_5_numeros (count_cartas, n_repartidas_totales);
+
+    /*for (i=0;i<10;i++)
         count_cartas[i]=0;
 
     for (i=0;i<n_repartidas;i++)
@@ -237,7 +253,7 @@ int main(){
     for (i=0;i<10;i++)
         printf("La carta %d salió %d veces, \n", num2numero(i),count_cartas[i]);
 
-    printf("\n");
+    printf("\n");*/
 
     //Determinar cuántos participantes perdieron por pasarse durante toda la partida. No responde. (6)
     printf ("Los siguientes jugadores se pasaron de 7 y medio durante toda la partida:\n");
@@ -258,8 +274,41 @@ int main(){
 
 }
 
-void all_cartas_palo(int mazo[], int repartidas)
-{
+void top_5_numeros (int count_cartas[], int repartidas){
+    int numerosMazo [10][2];
+    int i;
+    int j;
+    for (i=0; i<10; i++){
+        numerosMazo[i][0] = count_cartas[i];
+        if (i<7)
+            numerosMazo[i][1] = i+1;
+        else{
+            numerosMazo[i][1] = i+3;
+        }
+
+    }
+
+    int aux[2];
+    aux[0]=0;
+    aux[1]=0;
+    for (int i=0; i<10; i++){
+        for (j=0; j<10; j++){
+            if (numerosMazo [i][0]> numerosMazo[j][0]){
+                aux[0] = numerosMazo [i][0];
+                aux[1] = numerosMazo [i][1];
+                numerosMazo [i][0] = numerosMazo [j][0];
+                numerosMazo [i][1] = numerosMazo [j][1];
+                numerosMazo [j][0] = aux [0];
+                numerosMazo [j][1] = aux [1];
+            }
+        }
+    }
+    int n;
+    for (i=0; i<5; i++){
+        printf ("\n%d. la carta %d ha salido %d veces",i+1, numerosMazo[i][1], numerosMazo [i][0]);
+    }
+}
+void all_cartas_palo(int mazo[], int repartidas){
     int mazoXpalos[4][10];
     int i, j, k;
     int flag;
