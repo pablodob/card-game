@@ -15,7 +15,7 @@
 #define TECHO_BANCA 6
 #define APUESTA_MIN 100.0
 #define APUESTA_MAX 1500.0
-#define CARTAS_MAZO 10
+#define CARTAS_MAZO 40
 #define min(X, Y) ((X) < (Y) ? (X) : (Y))
 
 // SON TODAS FUNCIONES
@@ -51,7 +51,6 @@ int main(){
     srand(getpid());
 
     resetearmazo(mazo);
-    mezclar(mazo);
 
     int g,i,j;
     int jugadores;
@@ -100,6 +99,7 @@ int main(){
     //empiezan rondas
     for(g=0;g<rondas;g++){
 
+        mezclar(mazo);
         n_repartidas=0;
 
         //inicializa en -1 todas las manos de jugadores
@@ -232,8 +232,10 @@ int main(){
     for (i=0;i<n_repartidas;i++)
         count_cartas[mazo[i]%10]++;
 
+    int top_cartas[2];
+
     for (i=0;i<10;i++)
-        printf("La carta %d salió %d veces, ", num2numero(i),count_cartas[i]);
+        printf("La carta %d salió %d veces, \n", num2numero(i),count_cartas[i]);
 
     printf("\n");
 
@@ -301,7 +303,7 @@ void all_cartas_palo(int mazo[], int repartidas)
             }
         }
     }
-    
+
     if (print_flag == 0)
         printf("En esta partida no hubo ningún palo que salieran todas las cartas\n");
 
@@ -533,4 +535,5 @@ void mezclar(int mazo[]) {
         mazo[r1] = mazo[r2];
         mazo[r2] = temp;
     }
+
 }
