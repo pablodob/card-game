@@ -1,7 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
-#include <time.h>    //time()
 #include <unistd.h>  //unix standard - getpid()->muestra el Process ID o pid del proceso que ejecuta el programa
 
 #define MIN_JUGADORES 1
@@ -41,36 +39,32 @@ float ganador_apuesta           (float, int[], int, short int [], short int [], 
 void  mas_afortunado            (float[], float, int);;
 void  ordenar_segun_ganancias   (float[], int);
 void  all_cartas_palo           (int [], int, int [4][10]);
-void  top_5_numeros             (int [], int);
+void  top_5_numeros             (int []);
 void  print_all_cartas_palo(int [4][10]);
 
 int main(){
-    int mazo [CARTAS_MAZO];
-    int cartas_repartidas[CARTAS_MAZO];
-    int n_repartidas;
-    int n_repartidas_totales=0;
-    int count_cartas[10];
+
+    int mazo [CARTAS_MAZO];             //array de 40 posiciones que guardan una carta cada una.
+    int cartas_repartidas[CARTAS_MAZO]; //array que guarda las cartas que fueron repartidas.
+    int n_repartidas;                   //cotador de cartas repartidas. Se inicializa en cada ronda
+    int g,i,j;                          //contadores.
+    int jugadores;                      //cantidad de jugadores. Ingresada por el usuario.
+    int rondas;                         //cantidad de rondas. Ingresada por el usuario
+
+    srand(getpid());
+    resetearmazo(mazo);                 //función que asigna valores a cada posición de mazo[]
+
+    int mazoXpalos[4][10];              //inicializo el mazoXpalos utilizado en la función all_cartas_palo
+    for (i=0; i<4;i++)
+        for (j=0; j<10; j++)
+            mazoXpalos[i][j] = 0;
+    int count_cartas[10];               //inicializo el count_cartas utilizado en la función top_5_numeros
     for (int i=0; i<10; i++){
         count_cartas[i]=0;
     }
 
-    srand(getpid());
 
-    resetearmazo(mazo);
-
-    int mazoXpalos[4][10];
-
-    int g,i,j;
-    int jugadores;
-    int rondas;
-
-    //inicializo el mazoXpalos utilizado en la función all_cartas_palo
-    for (i=0; i<4;i++)
-        for (j=0; j<10; j++)
-            mazoXpalos[i][j] = 0;
-
-
-
+    //Se solicita al usuario ingresar la cantidad de jugadores.
     do {
         printf ("Por favor ingrese el numero de jugadores (entre %d y %d)\n", MIN_JUGADORES, MAX_JUGADORES);
         printf (">");
@@ -79,21 +73,21 @@ int main(){
     }
     while( (jugadores <MIN_JUGADORES) || (jugadores >MAX_JUGADORES) );
 
-    float pozo[jugadores];
-    float pozoBanca;
-    int   apuesta[jugadores];
+    float pozo[jugadores];              //array que guarda el dinero de cada jugador
+    float pozoBanca;                    //guarda el dinero de la banca
+    int   apuesta[jugadores];           //guarda las apuestas de cada jugador. Ingresada por el usuario.
 
-    int   cartasJugador[jugadores][MAX_MANO];
-    int   cartasBanca[MAX_MANO];
-    int   cantidadCartasJugador[jugadores];
-    int   cantidadCartasBanca;
-    int   respuesta;
+    int   cartasJugador[jugadores][MAX_MANO];   //array que guarda la mano actual de cada jugador. Se inicializa en cada ronda.
+    int   cartasBanca[MAX_MANO];                //array que guarda la mano actual de la baca. Se inicializa en cada ronda.
+    int   cantidadCartasJugador[jugadores];     //array que guarda la cantidad de cartas que pidió cada jugador.
+    int   cantidadCartasBanca;                  //array que guarda la cantidad de cartas que pidió la banca.
+    int   respuesta;                            //variable utilizada para solicitar más cartas.
 
-    float ganador;
-    float apuesta_max = 0;
-    short int apuesta_max_jugador[jugadores];
-    short int contador_pasados[jugadores];
-    short int contador_7med[jugadores];
+    float porcentajeGanado = 0.0;               //se utiliza para recordar el porcentaje ganado.
+    float apuesta_max = 0.0;                    //recuerda la apuesta máxima.
+    short int apuesta_max_jugador[jugadores];   //recuerda la apuesta máxima de cada jugador.
+    short int contador_pasados[jugadores];      //cuenta cuantos jugadores se pasaron de 7,5
+    short int contador_7med[jugadores];         //cuenta cuantos jugadores consiguieron 7,5
 
 
     //reparte pozo e iniciaiza arrays contadores
@@ -105,6 +99,7 @@ int main(){
     }
     pozoBanca= POZO_BANCA;
 
+    //solicita el numero de rondas
     do {
         printf ("Por favor ingrese el numero de rondas (entre %d y %d)\n", MIN_RONDAS, MAX_RONDAS);
         printf (">");
@@ -113,21 +108,24 @@ int main(){
     }
     while( (rondas < MIN_RONDAS) || (rondas > MAX_RONDAS) );
 
-    //empiezan rondas
+    //comienzan rondas
     for(g=0;g<rondas;g++){
 
         mezclar(mazo);
+        printf("\n");
         n_repartidas=0;
 
-        //inicializa en -1 todas las manos de jugadores
-        for (i=0;i<jugadores;i++)
-            for(j=0;j<MAX_MANO;j++)
+        //inicializa en -1 todas las manos de jugadores y la Banca.
+        for (i=0;i<jugadores;i++){
+            for(j=0;j<MAX_MANO;j++){
                 cartasJugador[i][j]=-1;
-
+            }
+        }
         for(j=0;j<MAX_MANO;j++){
                 cartasBanca [j] = -1;
         }
 
+        //reparte la primer carta a los jugadores y la Banca
         for (int i=0; i<jugadores; i++){
             cantidadCartasJugador[i]=0;
             cartasJugador[i][cantidadCartasJugador[i]] = mazo [n_repartidas++];
@@ -138,7 +136,7 @@ int main(){
         cartasBanca[cantidadCartasBanca]=mazo [n_repartidas++];
         printf ("La Banca ha recibido su carta\n");
 
-        //piden cartas jugadores
+        //pregunta a cada jugador si quiere más cartas.
         for (int i=0; i < jugadores; i++){
             respuesta=0;
 
@@ -148,17 +146,19 @@ int main(){
             }
 
             printf ("\n\nJugador %d, has recibido un ", i+1);
-            imprimir(cartasJugador[i][cantidadCartasJugador[i]++]);
+            imprimir(cartasJugador[i][cantidadCartasJugador[i]++]);         //muestra la primer carta
 
+            //pregunta cuánto desea apostar.
             do {
-                printf("\nCuánto quieres apostar? (Debe apostar un valor entre %f y %f)\n", APUESTA_MIN, min(pozo[i],APUESTA_MAX));
+                printf("\n%cCu\240nto quieres apostar? (Debe apostar un valor entre %.0f y %.0f)\n", 168, APUESTA_MIN, min(pozo[i],APUESTA_MAX));
                 printf(">");
                 fflush (stdin);
                 scanf ("%d", &apuesta[i]);
             } while ( (apuesta[i]<APUESTA_MIN) || (apuesta[i] > min(pozo[i], APUESTA_MAX) ));
 
-            // En caso de ser apuesta máxima actualiza variables apuesta_max y apuesta_max_jugador
-            if (apuesta_max < apuesta[i]){
+
+            //en caso de ser apuesta máxima actualiza variables apuesta_max y apuesta_max_jugador
+                        if (apuesta_max < apuesta[i]){
                 apuesta_max = apuesta[i];
                 for(j=0;j<jugadores;j++)
                     apuesta_max_jugador[j]=0;
@@ -166,59 +166,61 @@ int main(){
             } else if (apuesta_max == apuesta[i])
                 apuesta_max_jugador[i] = 1;
 
+            //pregunta si se desean más cartas
             do {
-                printf ("Deseas pedir otra carta?\n1: Si\n2: No\n>");
+                printf ("%cDeseas pedir otra carta?\n1: Si\n2: No\n>", 168);
                 fflush (stdin);
                 scanf ("%d",&respuesta);
                 if (respuesta == 1){
                     cartasJugador[i][cantidadCartasJugador[i]]=mazo[n_repartidas++];
                     printf ("\nJugador %d, has recibido un ", i+1);
                     imprimir(cartasJugador[i][cantidadCartasJugador[i]++]);
+                    printf (". ");
                 }
             } while (respuesta !=2 & puntaje(cartasJugador[i],cantidadCartasJugador[i])<7.5);
+            if (puntaje(cartasJugador[i],cantidadCartasJugador[i])>=7.5){
+                printf ("Has alcanzado el m\240ximo, no puedes seguir pidiendo cartas\n");      //si el jugador alcanzó el puntaje máximo no le permite seguir pidiendo.
+            }
         }
 
         respuesta=0;
 
         //pide cartas la banca
         if (pozoBanca<=0){
-            printf ("La Banca no tiene dinero en el pozo... que corra la sangre\n");
+            printf ("La Banca no tiene dinero en el pozo... que corra la sangre.\n");  //si la banca se queda sin dinero convoca una revuelta contra la timba.
         }
         else {
             printf ("La Banca ha recibido un ");
-            imprimir(cartasBanca[cantidadCartasBanca++]);
-            printf ("\n");
-            while (puntaje(cartasBanca,cantidadCartasBanca)<TECHO_BANCA){
+            imprimir(cartasBanca[cantidadCartasBanca++]);                   //imprime cada carta de la banca
+            printf (".\n");
+            while (puntaje(cartasBanca,cantidadCartasBanca)<TECHO_BANCA){   //la Banca pide siempre que esté entre los valores solicitados.
                 cartasBanca[cantidadCartasBanca]=mazo[n_repartidas++];
-                printf ("La Banca pide otra carta\nha recibido un ");
+                printf ("La Banca pide otra carta...\nHa recibido un ");
                 imprimir(cartasBanca[cantidadCartasBanca++]);
                 printf ("\n");
             }
         }
+        printf ("\n");
 
+        //imprime los puntajes de cada jugador y la banca
         for (int i; i<jugadores; i++){
-            printf ("el jugador %d ha recibido %f puntos\n", i+1, puntaje(cartasJugador[i], cantidadCartasJugador[i]));
+            printf ("el jugador %d ha conseguido %.0f puntos\n", i+1, puntaje(cartasJugador[i], cantidadCartasJugador[i]));
         }
-        printf ("La Banca ha conseguido %f puntos\n", puntaje(cartasBanca, cantidadCartasBanca));
+        printf ("La Banca ha conseguido %.0f puntos\n\n", puntaje(cartasBanca, cantidadCartasBanca));
 
+        //dice quiénes y por cuánto le ganaron a la banca. (ver función ganador_apuesta)
         for (i=0; i<jugadores; i++){
-            ganador = ganador_apuesta( puntaje(cartasBanca, cantidadCartasBanca), cartasJugador[i], cantidadCartasJugador[i], contador_pasados, contador_7med, i);
-            if (ganador == -1.0){
-                printf ("El jugador %d ha perdido su apuesta\n", i+1);
-                pozo[i]=pozo[i]-apuesta[i];
-                pozoBanca=pozoBanca + apuesta [i];
-            }
-            else {
-                printf("El jugador %d ha ganado un %f %% \n", i+1, ganador*100);
-                pozo[i]=pozo[i]+apuesta[i]*ganador;
-                pozoBanca=pozoBanca-apuesta[i]*ganador;
-            }
+            porcentajeGanado=ganador_apuesta( puntaje(cartasBanca, cantidadCartasBanca), cartasJugador[i], cantidadCartasJugador[i], contador_pasados, contador_7med, i);
+            pozo[i]=pozo[i]+apuesta[i]*porcentajeGanado;
+            pozoBanca=pozoBanca-apuesta[i]*porcentajeGanado;
         }
+        printf ("\n\n");
 
+        /*  este bloque sirve para verificar los pozos parciales de cada jugador.
         for (i=0; i<jugadores; i++){
             printf ("%f ,", pozo[i]);
         }
-        printf ("%f \n", pozoBanca);
+        printf ("%f \n", pozoBanca);*/
 
         for (i=0; i<n_repartidas; i++){
             if (num2numero(mazo[i])<=7){
@@ -227,11 +229,10 @@ int main(){
             else {
                 count_cartas[num2numero(mazo[i])-3]++;
             }
-        n_repartidas_totales = n_repartidas_totales + n_repartidas;
         }
 
     all_cartas_palo(mazo, n_repartidas, mazoXpalos);
-    
+
     }
 
     //Jugador que más dinero ganó (1)
@@ -245,7 +246,7 @@ int main(){
 
     //Indica si para los jugadores en conjunto fueron más las ganancias que las pérdidas (3)
     if(pozoBanca<POZO_BANCA)
-        printf("Para los jugadores en conjunto fueron más las ganancias que las pérdidas\n");
+        printf("Para los jugadores en conjunto fueron m\240s las ganancias que las pérdidas\n");
 
     //Cuantos jugadores lograron 7+figura durante el juego.  No responde a la consigna (4)
     printf ("Los siguientes jugadores lograrion un 7 y una figura:\n");
@@ -256,20 +257,8 @@ int main(){
 
     //To do
     //Mostrar un top 5 de las cartas numéricas que más salieron sin importar el palo. Falta ordenar (5)
-    top_5_numeros (count_cartas, n_repartidas_totales);
+    top_5_numeros (count_cartas);
 
-    /*for (i=0;i<10;i++)
-        count_cartas[i]=0;
-
-    for (i=0;i<n_repartidas;i++)
-        count_cartas[mazo[i]%10]++;
-
-    int top_cartas[2];
-
-    for (i=0;i<10;i++)
-        printf("La carta %d salió %d veces, \n", num2numero(i),count_cartas[i]);
-
-    printf("\n");*/
 
     //Determinar cuántos participantes perdieron por pasarse durante toda la partida. No responde. (6)
     printf ("Los siguientes jugadores se pasaron de 7 y medio durante toda la partida:\n");
@@ -290,7 +279,7 @@ int main(){
 
 }
 
-void top_5_numeros (int count_cartas[], int repartidas){
+void top_5_numeros (int count_cartas[]){
     int numerosMazo [10][2];
     int i;
     int j;
@@ -344,8 +333,8 @@ void print_all_cartas_palo(int mazoXpalos[4][10]){
         flag = 1;
         for (j=0; (j<10) && (flag == 1); j++)
             flag = mazoXpalos[i][j];
-        
-        
+
+
         if (flag == 1){
             switch (i) {
                 case 0: {
@@ -410,7 +399,7 @@ void mas_afortunado (float pozo_j[], float pozo_b, int cantidad){
     int n;
     if (ganancias [0][0]>ganancias_b){
         n=(int) ganancias[0][1];
-        printf ("\nEl jugador %d se ha llevado el mayor número de ganancias", n+1);
+        printf ("\nEl jugador %d se ha llevado el mayor n\243mero de ganancias", n+1);
     }
     else {
         printf ("\nHoy la Banca ha salido ganando");
@@ -490,39 +479,39 @@ float ganador_apuesta(float puntos_b, int mano[], int cartas_mano, short int con
         contador_7med[n_jugador]=1;
 
     if(puntos_j > 7.5){
-        printf("El jugador se pas�. Gana la banca");
+        printf("\nEl jugador %d se pas\242. Gana la banca.", n_jugador+1);
         contador_pasados[n_jugador]=1;
         return -1.0;
     }
     else if(puntos_j < 7,5){
         if (puntos_b>=puntos_j && puntos_b <= 7.5){
-            printf("Banca tiene más puntos que jugador. Gana banca");
+            printf("\nBanca tiene m\240s puntos que jugador %d. Gana banca.", n_jugador+1);
             return -1.0;
             }
         else{
-            printf("Gana el jugador el 25%% de la apuesta");
+            printf("\nGana el jugador %d el 25%% de la apuesta.", n_jugador+1);
             return 0.25;
         }
     }
     else if (puntos_b == 7.5){
-        printf("La banca tiene 7 y medio. Gana la banca");
+        printf("\nLa Banca tiene 7 y medio. El jugador %d pierde su apuesta.", n_jugador+1);
         return -1.0;
         }
     else if (cartas_mano>2){
-        printf("El jugador gana con tiene 7 y medio pero con m�s de 2 cartas. Gana 25%% de la apuesta");
+        printf("\nEl jugador %d gana con 7 y medio pero con m\240s de 2 cartas. Gana 25%% de la apuesta.", n_jugador+1);
         return 0.25;
         }
     else if (carta0[0]!=carta1[0]){
-        printf("Gana el jugador con 7 y medio y cartas de distinto palo. Gana 50%% de la apuesta");
+        printf("\nGana el jugador %d con 7 y medio y cartas de distinto palo. Gana 50%% de la apuesta.", n_jugador+1);
         return 0.5;
         }
     else if (carta0[0]==0 && (carta0[1]==12 || carta1[1]==12)){
-        printf("Gana el jugador con 7 y medio con un rey y cartas de oro. Gana 100%% de la apuesta");
+        printf("\nGana el jugador %d con 7 y medio con un rey y cartas de oro. Gana 100%% de la apuesta.", n_jugador+1);
         return 1.0;
         }
     else
         {
-        printf("Gana el jugador con 7 y medio con cartas del mismo palo. Gana 75%% de la apuesta");
+        printf("\nGana el jugador %d con 7 y medio con cartas del mismo palo. Gana 75%% de la apuesta.", n_jugador+1);
         return 0.75;
         }
 }
@@ -566,19 +555,19 @@ void imprimir(int num){
     printf("%d de ", num2numero(num));
     switch (num2palo(num)){
         case 0: {
-            printf("oro ");
+            printf("oro");
             break;
         }
         case 1: {
-            printf("basto ");
+            printf("basto");
             break;
         }
         case 2: {
-            printf("copa ");
+            printf("copa");
             break;
         }
         case 3: {
-            printf("espada ");
+            printf("espada");
             break;
             }
     }
@@ -596,7 +585,7 @@ void mostrar (int mazo[]){
 void mezclar(int mazo[]) {
     int r1,r2;
     int temp;
-    printf("Mezclando mazo \n");
+    printf("Mezclando mazo... \n");
     for (int i=0; i<100; i++){
         r1 = rand() %CARTAS_MAZO;
         r2 = rand() %CARTAS_MAZO;
