@@ -9,5 +9,4 @@ La matriz mazoXpalos nos permite identificar si salieron todas las cartas del mi
 La función count_cartas cuenta las cartas sin importar palo.
 Las apuestas maximas por jugador son guardadas en apuesta_max_jugador[] y por último tenemos los contadores contador_pasados[] contador_7med[].
 
-Antes de cada ingresos del usuario se borra el caché con la función fflush (stdin), esta función resuelve el problema de los bucles infinitos en SO Windows, no así en SO linux.
-El programa es óptimo para SO Windows, si se usara en SO linux el usuario deberá ingresar siempre valores enteros como se solicita.
+Antes de cada ingreso del usuario se borra el caché con la función fflush (stdin), esta función resuelve el problema de los bucles infinitos en SO Windows en caso de ingresos inesperados por parte del usuario, no así en SO linux. El programa es óptimo para SO Windows, si se usara en SO linux el usuario deberá ingresar siempre valores enteros como se solicita.

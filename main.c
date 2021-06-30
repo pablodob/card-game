@@ -31,7 +31,7 @@ void  mas_afortunado            (float[], float, int);;
 void  ordenar_segun_ganancias   (float[], int);
 void  all_cartas_palo           (int [], int, int [4][10]);
 void  top_5_numeros             (int []);
-void  print_all_cartas_palo(int [4][10]);
+void  print_all_cartas_palo     (int [4][10]);
 
 int main(){
 
@@ -171,12 +171,11 @@ int main(){
                 }
             } while (respuesta !=2 & puntaje(cartasJugador[i],cantidadCartasJugador[i])<7.5);
 
-            //eliminar siguiente if
-            if (puntaje(cartasJugador[i],cantidadCartasJugador[i])>=7.5){
-                printf ("Has alcanzado el m\240ximo, no puedes seguir pidiendo cartas\n");      //si el jugador alcanzó el puntaje máximo no le permite seguir pidiendo.
+            if (puntaje(cartasJugador[i],cantidadCartasJugador[i])>=7.5){ //Avisa al jugador que no puede seguir pidiendo porque se plantó o porque llagó a 7.5
+                printf ("Has alcanzado el m\240ximo, no puedes seguir pidiendo cartas\n");
             }
             else{
-                printf ("El jugador se planta.");
+                printf ("El jugador se planta. \n");
             }
         }
 
@@ -207,7 +206,7 @@ int main(){
 
         //usa la función ganador_apuesta() para ver qué jugador le ganó a la banca. Dice qué porcentaje ganó cada jugador.
         for (i=0; i<jugadores; i++){
-           switch (ganador_apuesta(puntaje(cartasBanca, cantidadCartasBanca), cartasJugador[i], cantidadCartasJugador[i], contador_pasados, contador_7med, i)){
+            switch (ganador_apuesta(puntaje(cartasBanca, cantidadCartasBanca), cartasJugador[i], cantidadCartasJugador[i], contador_pasados, contador_7med, i)){
                 case 0: {
                     printf("El jugador %d se pas\242.\n", i+1);
                     pozo[i]=pozo[i]+apuesta[i]*-1;
@@ -522,6 +521,7 @@ int ganador_apuesta(float puntos_b, int mano[], int cartas_mano, short int conta
     - 6 = gana 25% con 7.5
     - 7 = gana 25%
     */
+
     float puntos_j;
     int carta0[2],carta1[2];
     carta0[0] = num2palo(mano[0]);
@@ -532,8 +532,6 @@ int ganador_apuesta(float puntos_b, int mano[], int cartas_mano, short int conta
 
     if(puntos_j == 7.5 && ((carta0[1] == 7) || (carta1[1] == 7)))
         contador_7med[n_jugador]=1;
-
-
 
     if (puntos_j> 7.5){
         //printf ("El jugador %d se pasó. Pierde su apuesta. Gana la Banca.\n", n_jugador +1);
@@ -549,12 +547,12 @@ int ganador_apuesta(float puntos_b, int mano[], int cartas_mano, short int conta
         return 2;
         }
     }
-    else if (puntos_j>puntos_b || puntos_j<=7.5 && puntos_b>7.5 ){                                  //en todos estos casos gana el jugador
+    else if (puntos_j>puntos_b || (puntos_j<=7.5 && puntos_b>7.5) ){                                  //en todos estos casos gana el jugador
         if (puntos_j==7.5){                                                                         //gana con 7,5
             if (carta0[1]==7 || carta1[1]== 7){                                                     //en todos estos casos gana con 7+figura
                 if (carta0[0]==carta1[0]){                                                          //en todos estos casos gana con 7+figura del mismo palo
                     if (carta0[0]==0 && carta1[0]==0 && (carta0[1]==12 || carta1[1]==12)){          //7 oro rey oro
-                        //printf("\nGana el jugador %d con 7 y medio con un rey y cartas de oro. Gana 100%% de la apuesta.", n_jugador+1);
+                        //printf("Gana el jugador %d con 7 y medio con un rey y cartas de oro. Gana 100%% de la apuesta.\n", n_jugador+1);
                         return 3;
                     }
                     else {
