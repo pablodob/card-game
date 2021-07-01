@@ -12,7 +12,7 @@ Para repartir cartas se usa el contador *n_repartidas*.
 El pozo de cada jugador es guardado en el array *pozo[]* y el de la banca en la variable *pozoBanca*. *CartasJugador* y *cartasBanca* guardan las cartas de la actual mano.
 La matriz *mazoXpalos* nos permite identificar si salieron todas las cartas del mismo palo, ya que es utilizado en la función *all_cartas_palo*.
 La función *count_cartas* cuenta las cartas sin importar palo.
-Las apuestas maximas por jugador son guardadas en apuesta_max_jugador[] y por último tenemos los contadores *ontador_pasados[]*y *contador_7med[]*.
+Las apuestas maximas por jugador son guardadas en apuesta_max_jugador[] y por último tenemos los contadores *contador_pasados[]* y *contador_7med[]*.
 
 ### Tener en cuenta
 Antes de cada ingreso del usuario se borra el caché con la función fflush (stdin), esta función resuelve el problema de los bucles infinitos en SO Windows en caso de ingresos inesperados por parte del usuario, no así en SO linux. El programa es óptimo para SO Windows, si se usara en SO linux el usuario deberá ingresar siempre valores enteros como se solicita.
